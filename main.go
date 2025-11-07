@@ -2,25 +2,51 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
+	"strings"
 
-	"github.com/gin-gonic/gin"
+	"github.com/Aum-Patel1234/researchq_backend/routes"
+	"github.com/gin-contrib/cors"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	r := gin.Default()
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found or failed to load .env — continuing with environment variables")
 	}
 
-	r.GET("/", func(c *gin.Context) {
-		// c.JSON(http.StatusOK, "Welcome to home..")
-		c.String(http.StatusOK, "Welcome to Home..")
-	})
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
-	r.Run(os.Getenv("PORT"))
+	if !strings.HasPrefix(port, ":") {
+		port = ":" + port
+	}
+	// fmt.Println("Starting server on", port)
+
+	r := routes.SetUpRoutes()
+
+	originsEnv := os.Getenv("ALLOWED_ORIGINS")
+	var allowedOrigins []string
+	for _, origin := range strings.Split(originsEnv, ",") {
+		allowedOrigins = append(allowedOrigins, origin)
+	}
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: allowedOrigins,
+	}))
+	// TODO: in future configure this if needed
+	// config := cors.Config{
+	// 	AllowOrigins: []string{"*"}, // or specify e.g. []string{"http://localhost:3000"}
+	// 	AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+	// 	AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	// 	ExposeHeaders:    []string{"Content-Length"},
+	// 	AllowCredentials: true,
+	// }
+	// r.Use(cors.New(config))
+
+	if err := r.Run(port); err != nil {
+		log.Fatalf("Failed to run server : %v", err)
+	}
 }
