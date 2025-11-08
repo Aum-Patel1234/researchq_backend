@@ -36,5 +36,8 @@ go mod tidy
 
 ### .env file
 ```bash
-PORT=8000
+PORT="8000"
+ALLOWED_ORIGINS="http://localhost:3000,https://yourfrontend.com"
+DB_URL=""   # see from here - https://gorm.io/docs/connecting_to_the_database.html
+GIN_MODE="debug"
 ```
