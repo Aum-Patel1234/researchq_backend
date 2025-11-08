@@ -12,3 +12,6 @@ test:
 
 clean:
 	rm -rf bin
+
+migrate:
+	go run migrate/migrate.go

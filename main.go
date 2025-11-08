@@ -5,15 +5,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Aum-Patel1234/researchq_backend/initializers"
 	"github.com/Aum-Patel1234/researchq_backend/routes"
 	"github.com/gin-contrib/cors"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found or failed to load .env — continuing with environment variables")
-	}
+	initializers.LoadEnv()
+	db := initializers.ConnectToDB()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -25,11 +24,11 @@ func main() {
 	}
 	// fmt.Println("Starting server on", port)
 
-	r := routes.SetUpRoutes()
+	r := routes.SetUpRoutes(db)
 
 	originsEnv := os.Getenv("ALLOWED_ORIGINS")
 	var allowedOrigins []string
-	for _, origin := range strings.Split(originsEnv, ",") {
+	for origin := range strings.SplitSeq(originsEnv, ",") {
 		allowedOrigins = append(allowedOrigins, origin)
 	}
 

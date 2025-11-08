@@ -3,11 +3,13 @@ package routes
 import (
 	"net/http"
 
+	"github.com/Aum-Patel1234/researchq_backend/controllers"
 	"github.com/Aum-Patel1234/researchq_backend/utils"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func SetUpRoutes() *gin.Engine {
+func SetUpRoutes(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
 
 	v1 := router.Group("/v1")
@@ -26,6 +28,8 @@ func SetUpRoutes() *gin.Engine {
 
 		ctx.JSON(http.StatusBadRequest, response)
 	})
+
+	v1.GET("/users", controllers.GetAllUsers(db))
 
 	return router
 }
