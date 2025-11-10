@@ -30,9 +30,14 @@ func SetUpRoutes(db *gorm.DB) *gin.Engine {
 	})
 
 	v1.GET("/users", controllers.GetAllUsers(db))
-	v1.POST("/users", controllers.CreateUser(db))
+	// v1.POST("/users", controllers.CreateUser(db))
 	v1.PUT("/users/:id", controllers.UpdateUser(db))
 	v1.DELETE("/users/:id", controllers.DeleteUser(db))
+
+	v1.POST("/signup", controllers.CreateUser(db))
+	v1.POST("/login", controllers.Login(db))
+
+	// v1.GET("/subjects", controllers.GetSubjects(db))
 
 	return router
 }

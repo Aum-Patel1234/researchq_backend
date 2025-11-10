@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -62,7 +61,7 @@ func CreateUser(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(user)
+		// fmt.Println(user)
 		ctx.JSON(http.StatusCreated, utils.JsonResponse("", "User created Succesfully!", 1, true))
 	}
 }
