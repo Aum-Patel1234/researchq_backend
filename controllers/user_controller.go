@@ -22,7 +22,11 @@ func GetAllUsers(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, utils.JsonResponse("", "Users Fetched Succesfully!", users, true))
+		currUser, _ := ctx.Get("user")
+		ctx.JSON(http.StatusOK, utils.JsonResponse("", "Users Fetched Succesfully!", map[string]interface{}{
+			"users":       users,
+			"currentUser": currUser,
+		}, true))
 	}
 }
 

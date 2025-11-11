@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Aum-Patel1234/researchq_backend/controllers"
+	"github.com/Aum-Patel1234/researchq_backend/middleware"
 	"github.com/Aum-Patel1234/researchq_backend/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -29,7 +30,7 @@ func SetUpRoutes(db *gorm.DB) *gin.Engine {
 		ctx.JSON(http.StatusBadRequest, response)
 	})
 
-	v1.GET("/users", controllers.GetAllUsers(db))
+	v1.GET("/users", middleware.AuthMiddleware(db), controllers.GetAllUsers(db))
 	// v1.POST("/users", controllers.CreateUser(db))
 	v1.PUT("/users/:id", controllers.UpdateUser(db))
 	v1.DELETE("/users/:id", controllers.DeleteUser(db))

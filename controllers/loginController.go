@@ -65,13 +65,12 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		user.LastLogin = now
 
 		// send jwt token
-
 		claims := jwt.MapClaims{
 			"sub": user.ID,
 			"iat": time.Now().Unix(),
-			"exp": time.Now().Add(time.Hour).Unix(),
+			"exp": time.Now().Add(utils.TokenExpiryTime).Unix(),
 		}
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+		token := jwt.NewWithClaims(utils.JwtAlgo, claims)
 
 		tokenString, err := token.SignedString(hmacSampleSecret)
 		if err != nil {
@@ -80,10 +79,13 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		payload := gin.H{
-			"id":    user.ID,
-			"token": tokenString,
-		}
-		ctx.JSON(http.StatusOK, utils.JsonResponse("", "User Logged in Successfully!", payload, true))
+		// payload := gin.H{
+		// 	"id":    user.ID,
+		// 	"token": tokenString,
+		// }
+
+		ctx.SetSameSite(http.SameSiteLaxMode)
+		ctx.SetCookie(utils.CookieName, tokenString, 3600, "", "", true, true)
+		ctx.JSON(http.StatusOK, utils.JsonResponse("", "User Logged in Successfully!", 0, true))
 	}
 }
